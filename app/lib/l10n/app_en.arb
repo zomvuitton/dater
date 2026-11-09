@@ -1,0 +1,268 @@
+{
+  "@@locale": "en",
+  "appTitle": "Dater",
+  "appTagline": "Share your free hours with the circles you choose.",
+  "navMyWeek": "My week",
+  "navCircles": "Circles",
+  "navFriends": "Friends",
+  "navProfile": "Profile",
+  "cancel": "Cancel",
+  "save": "Save",
+  "delete": "Delete",
+  "remove": "Remove",
+  "retry": "Try again",
+  "join": "Join",
+  "copied": "Copied",
+  "errorGeneric": "Something went wrong. Please try again.",
+  "fieldRequired": "Required",
+  "email": "E-mail",
+  "emailInvalid": "Enter a valid e-mail address",
+  "password": "Password",
+  "passwordTooShort": "At least 6 characters",
+  "signIn": "Sign in",
+  "signUp": "Create account",
+  "signOut": "Sign out",
+  "haveAccount": "Already have an account? Sign in",
+  "noAccount": "New here? Create an account",
+  "authCheckEmail": "Check your e-mail to confirm your account, then sign in.",
+  "displayName": "Name",
+  "username": "Username",
+  "usernameHelp": "3–20 characters: a–z, 0–9 and _",
+  "usernameInvalid": "Use 3–20 lowercase letters, digits or _",
+  "usernameTaken": "This username is taken",
+  "onboardingTitle": "Pick your username",
+  "onboardingBody": "Friends find and add you with your @username.",
+  "continueAction": "Continue",
+  "myWeekTitle": "My week",
+  "myWeekHint": "Tap hours to select them, or long-press and drag. Tap a day to select it all.",
+  "hoursSelected": "{count, plural, =1{1 hour selected} other{{count} hours selected}}",
+  "@hoursSelected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "clearSelection": "Clear selection",
+  "markAvailable": "I'm free",
+  "removeAvailability": "Remove availability",
+  "sharedHours": "{hours, plural, =1{1 hour} other{{hours} hours}} shared with {circles, plural, =1{1 circle} other{{circles} circles}}",
+  "@sharedHours": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "circles": {
+        "type": "int"
+      }
+    }
+  },
+  "removedHours": "{count, plural, =1{1 hour} other{{count} hours}} removed",
+  "@removedHours": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "copyPreviousWeek": "Copy last week",
+  "copyWeekTitle": "Copy last week?",
+  "copyWeekBody": "Your availability for this week will be replaced with last week's.",
+  "copyWeekAction": "Copy",
+  "copyWeekDone": "{count, plural, =0{Last week was empty} =1{Copied 1 hour} other{Copied {count} hours}}",
+  "@copyWeekDone": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noCirclesTitle": "Create a circle first",
+  "noCirclesBody": "You choose which circles can see each free hour, so you need at least one circle.",
+  "pickerTitle": "Who can see this?",
+  "pickerSubtitle": "{count, plural, =1{Share 1 free hour with:} other{Share {count} free hours with:}}",
+  "@pickerSubtitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pickerAllCircles": "All circles",
+  "pickerSave": "Share",
+  "newCircle": "New circle",
+  "editCircle": "Edit circle",
+  "createCircle": "Create circle",
+  "circleName": "Name",
+  "circleNameHint": "e.g. Close friends, Climbing, Work",
+  "circleIcon": "Icon",
+  "circleColor": "Color",
+  "circlesEmptyTitle": "No circles yet",
+  "circlesEmptyBody": "Create a circle for a group of friends, or join one with an invite code.",
+  "memberCount": "{count, plural, =1{1 member} other{{count} members}}",
+  "@memberCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "youOwn": "Yours",
+  "owner": "Owner",
+  "youSuffix": "{name} (you)",
+  "@youSuffix": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "joinWithCode": "Join with code",
+  "inviteCode": "Invite code",
+  "inviteInvalid": "This invite code is not valid anymore.",
+  "backToCircles": "Back to circles",
+  "invite": "Invite",
+  "inviteTitle": "Invite to {name}",
+  "@inviteTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteBody": "Anyone with this code or link can join the circle.",
+  "copyCode": "Copy code",
+  "shareLink": "Share link",
+  "inviteShareText": "Join my circle \"{name}\" on Dater: {link} (code: {code})",
+  "@inviteShareText": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "link": {
+        "type": "String"
+      },
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteWithLink": "Invite with a link",
+  "inviteWithLinkBody": "Share the invite code with anyone",
+  "addFriendToCircle": "Add a friend",
+  "noFriendsToAdd": "All your friends are already in this circle.",
+  "removeMemberTitle": "Remove {name} from the circle?",
+  "@removeMemberTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "regenerateCode": "New invite code",
+  "regenerateCodeTitle": "Create a new invite code?",
+  "regenerateCodeBody": "The old code and links will stop working.",
+  "leaveCircle": "Leave circle",
+  "leaveCircleTitle": "Leave {name}?",
+  "@leaveCircleTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "leaveCircleBody": "The hours you shared with this circle will be removed.",
+  "deleteCircle": "Delete circle",
+  "deleteCircleTitle": "Delete {name}?",
+  "@deleteCircleTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteCircleBody": "Members, shared hours and plans of this circle will be deleted.",
+  "tabWeek": "Free times",
+  "tabPlans": "Plans",
+  "tabMembers": "Members",
+  "heatmapHint": "Numbers show how many members are free. Tap an hour to see who and propose a plan.",
+  "freeCount": "{free} of {total} free",
+  "@freeCount": {
+    "placeholders": {
+      "free": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "nobodyFree": "Nobody has shared this hour yet.",
+  "proposePlan": "Propose a plan",
+  "proposePlanAction": "Propose",
+  "planTitle": "What's the plan?",
+  "planTitleHint": "e.g. Coffee, Movie night",
+  "planNote": "Note (optional)",
+  "startTime": "Start time",
+  "endTime": "End time",
+  "plansEmptyTitle": "No plans yet",
+  "plansEmptyBody": "Tap a free hour on the Free times tab to propose one.",
+  "proposedBy": "Proposed by {name}",
+  "@proposedBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "planCounts": "{going} going · {maybe} maybe · {no} can't",
+  "@planCounts": {
+    "placeholders": {
+      "going": {
+        "type": "int"
+      },
+      "maybe": {
+        "type": "int"
+      },
+      "no": {
+        "type": "int"
+      }
+    }
+  },
+  "going": "Going",
+  "maybe": "Maybe",
+  "notGoing": "Can't",
+  "deletePlanTitle": "Delete this plan?",
+  "searchUsername": "Search by @username",
+  "noUsersFound": "No users found",
+  "addFriend": "Add",
+  "accept": "Accept",
+  "decline": "Decline",
+  "requestSent": "Friend request sent",
+  "requestPending": "Pending",
+  "friendsLabel": "Friends",
+  "incomingRequests": "Friend requests",
+  "sentRequests": "Sent requests",
+  "cancelRequest": "Cancel",
+  "friendsCount": "Friends ({count})",
+  "@friendsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "friendsEmpty": "Search for friends by their username above.",
+  "unfriend": "Remove friend",
+  "unfriendTitle": "Remove {name} from friends?",
+  "@unfriendTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "unfriendBody": "You stay together in circles you already share.",
+  "language": "Language",
+  "languageSystem": "Device language"
+}
