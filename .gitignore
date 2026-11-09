@@ -1,0 +1,9 @@
+# Supabase local
+supabase/.branches
+supabase/.temp
+supabase/.env
+.env
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
