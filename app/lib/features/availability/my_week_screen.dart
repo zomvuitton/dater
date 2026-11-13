@@ -6,6 +6,7 @@ import '../../core/models.dart';
 import '../../core/ui.dart';
 import '../../core/week.dart';
 import '../../l10n/app_localizations.dart';
+import '../notifications/notification_bell.dart';
 import '../circles/circles_repository.dart';
 import 'availability_repository.dart';
 import 'circle_picker_sheet.dart';
@@ -108,6 +109,7 @@ class _MyWeekScreenState extends ConsumerState<MyWeekScreen> {
       appBar: AppBar(
         title: Text(l10n.myWeekTitle),
         actions: [
+          const NotificationBell(),
           PopupMenuButton<String>(
             onSelected: (value) {
               if (value == 'copy') _copyPreviousWeek();

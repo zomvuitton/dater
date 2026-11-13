@@ -859,6 +859,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Device language'**
   String get languageSystem;
+
+  /// No description provided for @open.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get open;
+
+  /// No description provided for @notificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationsTitle;
+
+  /// No description provided for @markAllRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark all as read'**
+  String get markAllRead;
+
+  /// No description provided for @notificationsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications yet'**
+  String get notificationsEmptyTitle;
+
+  /// No description provided for @notificationsEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll see new plans in your circles and answers to your plans here.'**
+  String get notificationsEmptyBody;
+
+  /// No description provided for @notifPlanProposed.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} proposed a plan: {title}'**
+  String notifPlanProposed(String name, String title);
+
+  /// No description provided for @notifPlanGoing.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is going to “{title}”'**
+  String notifPlanGoing(String name, String title);
+
+  /// No description provided for @notifPlanMaybe.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} might join “{title}”'**
+  String notifPlanMaybe(String name, String title);
+
+  /// No description provided for @notifPlanNo.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} can\'t make it to “{title}”'**
+  String notifPlanNo(String name, String title);
+
+  /// No description provided for @timeJustNow.
+  ///
+  /// In en, this message translates to:
+  /// **'just now'**
+  String get timeJustNow;
+
+  /// No description provided for @timeMinutesAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} min ago'**
+  String timeMinutesAgo(int count);
+
+  /// No description provided for @timeHoursAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} h ago'**
+  String timeHoursAgo(int count);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

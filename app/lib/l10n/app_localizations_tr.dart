@@ -440,4 +440,52 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get languageSystem => 'Cihaz dili';
+
+  @override
+  String get open => 'Aç';
+
+  @override
+  String get notificationsTitle => 'Bildirimler';
+
+  @override
+  String get markAllRead => 'Tümünü okundu say';
+
+  @override
+  String get notificationsEmptyTitle => 'Henüz bildirim yok';
+
+  @override
+  String get notificationsEmptyBody => 'Çevrelerindeki yeni planlar ve planlarına gelen yanıtlar burada görünür.';
+
+  @override
+  String notifPlanProposed(String name, String title) {
+    return '$name yeni bir plan önerdi: $title';
+  }
+
+  @override
+  String notifPlanGoing(String name, String title) {
+    return '$name “$title” planına geliyor';
+  }
+
+  @override
+  String notifPlanMaybe(String name, String title) {
+    return '$name “$title” planı için “belki” dedi';
+  }
+
+  @override
+  String notifPlanNo(String name, String title) {
+    return '$name “$title” planına gelemiyor';
+  }
+
+  @override
+  String get timeJustNow => 'şimdi';
+
+  @override
+  String timeMinutesAgo(int count) {
+    return '$count dk önce';
+  }
+
+  @override
+  String timeHoursAgo(int count) {
+    return '$count sa önce';
+  }
 }

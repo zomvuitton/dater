@@ -449,4 +449,52 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get languageSystem => 'Device language';
+
+  @override
+  String get open => 'Open';
+
+  @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get markAllRead => 'Mark all as read';
+
+  @override
+  String get notificationsEmptyTitle => 'No notifications yet';
+
+  @override
+  String get notificationsEmptyBody => 'You\'ll see new plans in your circles and answers to your plans here.';
+
+  @override
+  String notifPlanProposed(String name, String title) {
+    return '$name proposed a plan: $title';
+  }
+
+  @override
+  String notifPlanGoing(String name, String title) {
+    return '$name is going to “$title”';
+  }
+
+  @override
+  String notifPlanMaybe(String name, String title) {
+    return '$name might join “$title”';
+  }
+
+  @override
+  String notifPlanNo(String name, String title) {
+    return '$name can\'t make it to “$title”';
+  }
+
+  @override
+  String get timeJustNow => 'just now';
+
+  @override
+  String timeMinutesAgo(int count) {
+    return '$count min ago';
+  }
+
+  @override
+  String timeHoursAgo(int count) {
+    return '$count h ago';
+  }
 }

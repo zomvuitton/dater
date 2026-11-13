@@ -17,10 +17,19 @@ import 'circle_form_sheet.dart';
 import 'circles_repository.dart';
 import 'invite_sheet.dart';
 
+enum CircleTab {
+  week,
+  plans,
+  members;
+
+  static CircleTab fromQuery(String? value) => values.firstWhere((t) => t.name == value, orElse: () => week);
+}
+
 class CircleDetailScreen extends ConsumerWidget {
-  const CircleDetailScreen({super.key, required this.circleId});
+  const CircleDetailScreen({super.key, required this.circleId, this.initialTab = CircleTab.week});
 
   final String circleId;
+  final CircleTab initialTab;
 
   Future<void> _onMenu(BuildContext context, WidgetRef ref, Circle circle, String action) async {
     final l10n = AppLocalizations.of(context);
@@ -89,6 +98,7 @@ class CircleDetailScreen extends ConsumerWidget {
         final isOwner = circle.ownerId == me;
         return DefaultTabController(
           length: 3,
+          initialIndex: initialTab.index,
           child: Scaffold(
             appBar: AppBar(
               title: Text('${circle.emoji} ${circle.name}'),

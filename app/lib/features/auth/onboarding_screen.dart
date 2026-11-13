@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/session.dart';
-import '../../core/supabase.dart';
 import '../../core/ui.dart';
 import '../../l10n/app_localizations.dart';
 import '../profile/profile_repository.dart';
@@ -60,7 +59,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        actions: [TextButton(onPressed: () => ref.read(supabaseProvider).auth.signOut(), child: Text(l10n.signOut))],
+        actions: [TextButton(onPressed: () => signOut(ref), child: Text(l10n.signOut))],
       ),
       body: SafeArea(
         child: Center(

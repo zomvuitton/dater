@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../features/notifications/push_service.dart';
 import '../features/profile/profile_repository.dart';
 import 'models.dart';
 import 'supabase.dart';
@@ -69,3 +70,10 @@ final appSessionProvider = Provider<AppSession>((ref) {
   ref.onDispose(session.dispose);
   return session;
 });
+
+/// Signs out, first removing this device's push token so the next person
+/// using the phone does not get the previous account's notifications.
+Future<void> signOut(WidgetRef ref) async {
+  await ref.read(pushServiceProvider).unregister();
+  await ref.read(supabaseProvider).auth.signOut();
+}

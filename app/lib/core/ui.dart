@@ -5,6 +5,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../l10n/app_localizations.dart';
 import 'models.dart';
 
+/// Lets code outside the widget tree (e.g. push handling) show snack bars.
+final rootMessengerKey = GlobalKey<ScaffoldMessengerState>();
+
 /// A readable message for errors coming back from Supabase.
 String errorMessage(BuildContext context, Object error) {
   final l10n = AppLocalizations.of(context);

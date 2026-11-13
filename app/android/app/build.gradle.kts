@@ -47,3 +47,9 @@ kotlin {
 flutter {
     source = "../.."
 }
+
+// Push notifications need a Firebase project. Put its google-services.json next
+// to this file (see README › Bildirimler); without it the app builds without Firebase.
+if (file("google-services.json").exists()) {
+    apply(plugin = "com.google.gms.google-services")
+}

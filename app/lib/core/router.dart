@@ -9,6 +9,7 @@ import '../features/circles/circle_detail_screen.dart';
 import '../features/circles/circles_screen.dart';
 import '../features/circles/join_screen.dart';
 import '../features/friends/friends_screen.dart';
+import '../features/notifications/notifications_screen.dart';
 import '../features/profile/profile_screen.dart';
 import 'home_shell.dart';
 import 'session.dart';
@@ -46,6 +47,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/auth', builder: (context, state) => const AuthScreen()),
       GoRoute(path: '/onboarding', builder: (context, state) => const OnboardingScreen()),
       GoRoute(path: '/loading', builder: (context, state) => const _LoadingScreen()),
+      GoRoute(path: '/notifications', builder: (context, state) => const NotificationsScreen()),
       GoRoute(
         path: '/join/:code',
         builder: (context, state) => JoinScreen(code: state.pathParameters['code']!),
@@ -64,7 +66,12 @@ final routerProvider = Provider<GoRouter>((ref) {
                 routes: [
                   GoRoute(
                     path: ':id',
-                    builder: (context, state) => CircleDetailScreen(circleId: state.pathParameters['id']!),
+                    builder: (context, state) => CircleDetailScreen(
+                      // A new tab parameter (e.g. from a notification) rebuilds the screen on that tab.
+                      key: ValueKey(state.uri.toString()),
+                      circleId: state.pathParameters['id']!,
+                      initialTab: CircleTab.fromQuery(state.uri.queryParameters['tab']),
+                    ),
                   ),
                 ],
               ),

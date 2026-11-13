@@ -7,6 +7,7 @@ import '../../core/models.dart';
 import '../../core/supabase.dart';
 import '../../core/ui.dart';
 import '../../l10n/app_localizations.dart';
+import '../notifications/notification_bell.dart';
 import '../profile/profile_repository.dart';
 import 'friends_repository.dart';
 
@@ -90,7 +91,7 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
 
     final results = _results;
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.navFriends)),
+      appBar: AppBar(title: Text(l10n.navFriends), actions: const [NotificationBell()]),
       body: RefreshIndicator(
         onRefresh: () => ref.refresh(friendshipsProvider.future),
         child: ListView(

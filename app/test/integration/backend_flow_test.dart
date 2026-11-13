@@ -5,12 +5,15 @@
 @TestOn('vm')
 library;
 
+import 'dart:async';
+
 import 'package:dater/core/models.dart';
 import 'package:dater/core/supabase.dart';
 import 'package:dater/core/week.dart';
 import 'package:dater/features/availability/availability_repository.dart';
 import 'package:dater/features/circles/circles_repository.dart';
 import 'package:dater/features/friends/friends_repository.dart';
+import 'package:dater/features/notifications/notifications_repository.dart';
 import 'package:dater/features/plans/plans_repository.dart';
 import 'package:dater/features/profile/profile_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -36,6 +39,7 @@ class TestUser {
   CirclesRepository get circles => CirclesRepository(client);
   AvailabilityRepository get availability => AvailabilityRepository(client);
   PlansRepository get plans => PlansRepository(client);
+  NotificationsRepository get notifications => NotificationsRepository(client);
 
   Future<void> signUp(String suffix) async {
     final res = await client.auth.signUp(
@@ -157,6 +161,59 @@ void main() {
     expect(plans.single.count(PlanResponseStatus.no), 1);
     expect(plans.single.startsAt, start);
     expect(await alice.plans.fetchUpcoming(work.id), isEmpty);
+  }, skip: !enabled);
+
+  test('notifications: new plan and answers, live updates, read state', () async {
+    final inserted = Completer<void>();
+    final ready = Completer<void>();
+    await alice.client.realtime.setAuth(alice.client.auth.currentSession!.accessToken);
+    final channel = alice.notifications.subscribe(
+      alice.id,
+      () {
+        if (!inserted.isCompleted) inserted.complete();
+      },
+      onReady: () {
+        if (!ready.isCompleted) ready.complete();
+      },
+    );
+    await ready.future.timeout(const Duration(seconds: 20));
+
+    final start = slotStart(week, (day: 3, hour: 19));
+    final plan = await carol.plans.create(
+      circleId: climbing.id,
+      title: 'Coffee',
+      startsAt: start,
+      endsAt: start.add(const Duration(hours: 1)),
+    );
+    await inserted.future.timeout(const Duration(seconds: 10));
+    await alice.client.removeChannel(channel);
+
+    final aliceInbox = await alice.notifications.fetchRecent();
+    final proposed = aliceInbox.firstWhere((n) => n.type == NotificationType.planProposed && n.planTitle == 'Coffee');
+    expect(proposed.actor.id, carol.id);
+    expect(proposed.circleName, 'Climbing');
+    expect(proposed.planStartsAt, start);
+    expect(proposed.isRead, isFalse);
+    expect(proposed.route, '/circles/${climbing.id}?tab=plans');
+    expect((await carol.notifications.fetchRecent()).where((n) => n.planTitle == 'Coffee'), isEmpty);
+
+    await alice.plans.respond(plan.id, PlanResponseStatus.maybe);
+    await alice.plans.respond(plan.id, PlanResponseStatus.going);
+    final answers = (await carol.notifications.fetchRecent()).where((n) => n.type == NotificationType.planResponse);
+    expect(answers.map((n) => (n.actor.id, n.response)), [(alice.id, PlanResponseStatus.going)]);
+
+    await alice.notifications.markRead([proposed.id]);
+    expect((await alice.notifications.fetchRecent()).firstWhere((n) => n.id == proposed.id).isRead, isTrue);
+    await carol.notifications.markRead();
+    expect((await carol.notifications.fetchRecent()).where((n) => !n.isRead), isEmpty);
+
+    await alice.notifications.registerDeviceToken(
+      token: 'tok-$suffix',
+      platform: 'ios',
+      locale: 'tr',
+      timeZone: 'Europe/Istanbul',
+    );
+    await alice.notifications.deleteDeviceToken('tok-$suffix');
   }, skip: !enabled);
 
   test('leaving a circle removes shared hours', () async {

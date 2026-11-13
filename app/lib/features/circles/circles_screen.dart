@@ -6,6 +6,7 @@ import '../../core/models.dart';
 import '../../core/supabase.dart';
 import '../../core/ui.dart';
 import '../../l10n/app_localizations.dart';
+import '../notifications/notification_bell.dart';
 import 'circle_form_sheet.dart';
 import 'circles_repository.dart';
 
@@ -36,6 +37,7 @@ class CirclesScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(l10n.navCircles),
         actions: [
+          const NotificationBell(),
           IconButton(
             tooltip: l10n.joinWithCode,
             icon: const Icon(Icons.vpn_key_outlined),

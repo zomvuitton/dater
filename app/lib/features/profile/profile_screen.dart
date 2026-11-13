@@ -6,6 +6,7 @@ import '../../core/session.dart';
 import '../../core/supabase.dart';
 import '../../core/ui.dart';
 import '../../l10n/app_localizations.dart';
+import '../notifications/notification_bell.dart';
 import 'profile_repository.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -53,7 +54,7 @@ class ProfileScreen extends ConsumerWidget {
       builder: (context, _) {
         final profile = session.profile;
         return Scaffold(
-          appBar: AppBar(title: Text(l10n.navProfile)),
+          appBar: AppBar(title: Text(l10n.navProfile), actions: const [NotificationBell()]),
           body: ListView(
             children: [
               if (profile != null) ...[
@@ -88,11 +89,7 @@ class ProfileScreen extends ConsumerWidget {
                 ),
               ),
               const Divider(),
-              ListTile(
-                leading: const Icon(Icons.logout),
-                title: Text(l10n.signOut),
-                onTap: () => ref.read(supabaseProvider).auth.signOut(),
-              ),
+              ListTile(leading: const Icon(Icons.logout), title: Text(l10n.signOut), onTap: () => signOut(ref)),
             ],
           ),
         );

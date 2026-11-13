@@ -174,3 +174,71 @@ const circleColorChoices = <Color>[
 
 /// Emoji offered when creating a circle.
 const circleEmojiChoices = ['👥', '🏠', '💼', '🎉', '⚽', '🎮', '☕', '🍻', '🎓', '❤️', '🧗', '🎵'];
+
+enum NotificationType {
+  planProposed('plan_proposed'),
+  planResponse('plan_response');
+
+  const NotificationType(this.dbValue);
+  final String dbValue;
+
+  static NotificationType fromDb(String value) => values.firstWhere((t) => t.dbValue == value);
+}
+
+/// An entry in the in-app notification inbox.
+class AppNotification {
+  const AppNotification({
+    required this.id,
+    required this.type,
+    required this.actor,
+    required this.circleId,
+    required this.circleName,
+    required this.circleEmoji,
+    required this.planTitle,
+    required this.planStartsAt,
+    required this.response,
+    required this.createdAt,
+    required this.readAt,
+  });
+
+  final String id;
+  final NotificationType type;
+  final Profile actor;
+  final String circleId;
+  final String circleName;
+  final String circleEmoji;
+  final String planTitle;
+
+  /// Local time.
+  final DateTime planStartsAt;
+  final PlanResponseStatus? response;
+
+  /// Local time.
+  final DateTime createdAt;
+  final DateTime? readAt;
+
+  bool get isRead => readAt != null;
+
+  /// Where tapping the notification leads.
+  String get route => '/circles/$circleId?tab=plans';
+
+  factory AppNotification.fromJson(Map<String, dynamic> json) {
+    final circle = json['circle'] as Map<String, dynamic>;
+    final plan = json['plan'] as Map<String, dynamic>;
+    final response = json['response'] as String?;
+    final readAt = json['read_at'] as String?;
+    return AppNotification(
+      id: json['id'] as String,
+      type: NotificationType.fromDb(json['type'] as String),
+      actor: Profile.fromJson(json['actor'] as Map<String, dynamic>),
+      circleId: json['circle_id'] as String,
+      circleName: circle['name'] as String,
+      circleEmoji: circle['emoji'] as String,
+      planTitle: plan['title'] as String,
+      planStartsAt: DateTime.parse(plan['starts_at'] as String).toLocal(),
+      response: response == null ? null : PlanResponseStatus.values.byName(response),
+      createdAt: DateTime.parse(json['created_at'] as String).toLocal(),
+      readAt: readAt == null ? null : DateTime.parse(readAt).toLocal(),
+    );
+  }
+}

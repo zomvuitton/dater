@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/locale.dart';
 import 'core/router.dart';
+import 'core/ui.dart';
+import 'features/notifications/push_service.dart';
 import 'l10n/app_localizations.dart';
 
 const _seed = Color(0xFF3FA34D);
@@ -13,7 +15,9 @@ class DaterApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(pushServiceProvider);
     return MaterialApp.router(
+      scaffoldMessengerKey: rootMessengerKey,
       onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
       debugShowCheckedModeBanner: false,
       routerConfig: ref.watch(routerProvider),

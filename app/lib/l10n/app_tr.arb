@@ -127,5 +127,17 @@
   "unfriendTitle": "{name} arkadaşlıktan çıkarılsın mı?",
   "unfriendBody": "Zaten ortak olduğunuz çevrelerde kalmaya devam edersiniz.",
   "language": "Dil",
-  "languageSystem": "Cihaz dili"
+  "languageSystem": "Cihaz dili",
+  "open": "Aç",
+  "notificationsTitle": "Bildirimler",
+  "markAllRead": "Tümünü okundu say",
+  "notificationsEmptyTitle": "Henüz bildirim yok",
+  "notificationsEmptyBody": "Çevrelerindeki yeni planlar ve planlarına gelen yanıtlar burada görünür.",
+  "notifPlanProposed": "{name} yeni bir plan önerdi: {title}",
+  "notifPlanGoing": "{name} “{title}” planına geliyor",
+  "notifPlanMaybe": "{name} “{title}” planı için “belki” dedi",
+  "notifPlanNo": "{name} “{title}” planına gelemiyor",
+  "timeJustNow": "şimdi",
+  "timeMinutesAgo": "{count} dk önce",
+  "timeHoursAgo": "{count} sa önce"
 }

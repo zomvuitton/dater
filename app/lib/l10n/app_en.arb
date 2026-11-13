@@ -264,5 +264,71 @@
   },
   "unfriendBody": "You stay together in circles you already share.",
   "language": "Language",
-  "languageSystem": "Device language"
+  "languageSystem": "Device language",
+  "open": "Open",
+  "notificationsTitle": "Notifications",
+  "markAllRead": "Mark all as read",
+  "notificationsEmptyTitle": "No notifications yet",
+  "notificationsEmptyBody": "You'll see new plans in your circles and answers to your plans here.",
+  "notifPlanProposed": "{name} proposed a plan: {title}",
+  "@notifPlanProposed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "notifPlanGoing": "{name} is going to “{title}”",
+  "@notifPlanGoing": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "notifPlanMaybe": "{name} might join “{title}”",
+  "@notifPlanMaybe": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "notifPlanNo": "{name} can't make it to “{title}”",
+  "@notifPlanNo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "timeJustNow": "just now",
+  "timeMinutesAgo": "{count} min ago",
+  "@timeMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "timeHoursAgo": "{count} h ago",
+  "@timeHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }
