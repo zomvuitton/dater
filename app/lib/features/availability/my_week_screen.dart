@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show setEquals;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -26,8 +26,12 @@ class _MyWeekScreenState extends ConsumerState<MyWeekScreen> {
   final _selection = GridSelection();
   bool _busy = false;
 
-  void _changeWeek(DateTime week) => setState(() {
+  /// Day to focus in a newly shown week (null: today / Monday).
+  int? _focusOnNewWeek;
+
+  void _changeWeek(DateTime week, {int? focus}) => setState(() {
     _weekStart = week;
+    _focusOnNewWeek = focus;
     _selection.clear();
   });
 
@@ -130,6 +134,10 @@ class _MyWeekScreenState extends ConsumerState<MyWeekScreen> {
             Expanded(
               child: WeekGrid(
                 weekStart: _weekStart,
+                initialFocusDay: _focusOnNewWeek,
+                // Swiping past Sunday opens next week on Monday, and back.
+                onWeekEdge: (direction) =>
+                    _changeWeek(addWeeks(_weekStart, direction), focus: direction > 0 ? 0 : daysPerWeek - 1),
                 onTap: (slot) => setState(() => _selection.toggle(slot)),
                 onDayTap: (day) => setState(() => _selection.toggleDay(day)),
                 onDragStart: (slot) => setState(() => _selection.startDrag(slot)),
@@ -145,7 +153,7 @@ class _MyWeekScreenState extends ConsumerState<MyWeekScreen> {
                       child: AvailabilityBlock(
                         fromHour: run.fromHour,
                         toHour: run.toHour,
-                        colors: [for (final id in run.value) ?circleById[id]?.color],
+                        circles: [for (final id in run.value) ?circleById[id]],
                       ),
                     ),
                   // The current selection, drawn on top.
@@ -169,7 +177,7 @@ class _MyWeekScreenState extends ConsumerState<MyWeekScreen> {
                 child: Text(l10n.myWeekHint, textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodySmall),
               )
             : Material(
-                elevation: 3,
+                color: Theme.of(context).colorScheme.surfaceContainerLow,
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
                   child: Row(
@@ -177,18 +185,18 @@ class _MyWeekScreenState extends ConsumerState<MyWeekScreen> {
                       Expanded(child: Text(l10n.hoursSelected(_selection.selected.length))),
                       IconButton(
                         tooltip: l10n.clearSelection,
-                        icon: const Icon(Icons.close),
+                        icon: const Icon(Icons.close_rounded),
                         onPressed: () => setState(_selection.clear),
                       ),
                       if (selectedHasShared)
                         IconButton(
                           tooltip: l10n.removeAvailability,
-                          icon: const Icon(Icons.event_busy),
+                          icon: const Icon(Icons.remove_circle_outline_rounded),
                           onPressed: _busy ? null : _remove,
                         ),
                       const SizedBox(width: 4),
                       FilledButton.icon(
-                        icon: const Icon(Icons.event_available),
+                        icon: const Icon(Icons.check_rounded),
                         onPressed: _busy || weekAsync.isLoading ? null : () => _share(week, circles),
                         label: Text(l10n.markAvailable),
                       ),
@@ -202,64 +210,85 @@ class _MyWeekScreenState extends ConsumerState<MyWeekScreen> {
 }
 
 /// One continuous stretch of free (or selected) hours in a day column.
+/// In the wide, focused day it shows the time range and the circles; in the
+/// narrow days it is a plain pill.
 class AvailabilityBlock extends StatelessWidget {
   const AvailabilityBlock({
     super.key,
     required this.fromHour,
     required this.toHour,
-    this.colors = const [],
+    this.circles = const [],
     this.selected = false,
   });
 
   final int fromHour;
   final int toHour;
 
-  /// Colors of the circles these hours are shared with.
-  final List<Color> colors;
+  /// Circles these hours are shared with.
+  final List<Circle> circles;
   final bool selected;
+
+  /// "🧗 Tırmanış" for one circle, "🧗 ❤️ 🎉" for several.
+  String get circlesLabel =>
+      circles.length == 1 ? '${circles.first.emoji} ${circles.first.name}' : circles.map((c) => c.emoji).join(' ');
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final fill = selected ? scheme.primary : scheme.primaryContainer;
     final foreground = selected ? scheme.onPrimary : scheme.onPrimaryContainer;
-    return Container(
-      padding: const EdgeInsets.fromLTRB(3, 3, 3, 4),
-      decoration: BoxDecoration(
-        color: selected ? scheme.primary.withValues(alpha: 0.6) : scheme.primaryContainer,
-        borderRadius: BorderRadius.circular(8),
-        border: selected ? Border.all(color: scheme.primary, width: 2) : null,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Narrow columns: shrink the label rather than cut it off.
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: AlignmentDirectional.centerStart,
-            child: Text(
-              '$fromHour–$toHour',
-              maxLines: 1,
-              softWrap: false,
-              style: Theme.of(context).textTheme.labelSmall
-                  ?.copyWith(color: foreground, fontWeight: FontWeight.w600, height: 1.1),
-            ),
-          ),
-          const Spacer(),
-          if (colors.isNotEmpty)
-            Wrap(
-              spacing: 2,
-              runSpacing: 2,
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final wide = constraints.maxWidth >= WeekGrid.wideColumn - 2 * WeekGrid.blockInsetX;
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: ColoredBox(
+            color: fill,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                for (final color in colors.take(4))
-                  Container(
-                    width: 6,
-                    height: 6,
-                    decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-                  ),
+                // Saved hours carry a coral edge; the selection is solid coral.
+                if (!selected) Container(width: 4, color: scheme.primary),
+                Expanded(
+                  child: !wide
+                      ? const SizedBox.shrink()
+                      : Padding(
+                          padding: const EdgeInsets.fromLTRB(8, 5, 6, 4),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${formatHour(context, fromHour)} – ${formatHour(context, toHour % hoursPerDay)}',
+                                maxLines: 1,
+                                softWrap: false,
+                                overflow: TextOverflow.fade,
+                                style: theme.textTheme.labelMedium?.copyWith(
+                                  color: foreground,
+                                  fontWeight: FontWeight.w800,
+                                  height: 1.2,
+                                ),
+                              ),
+                              if (circles.isNotEmpty && constraints.maxHeight >= 36)
+                                Text(
+                                  circlesLabel,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: theme.textTheme.labelSmall?.copyWith(
+                                    color: foreground.withValues(alpha: 0.8),
+                                    height: 1.2,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                ),
               ],
             ),
-        ],
-      ),
+          ),
+        );
+      },
     );
   }
 }

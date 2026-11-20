@@ -151,7 +151,7 @@ class Plan {
 }
 
 Color colorFromHex(String hex) {
-  final value = int.tryParse(hex.replaceFirst('#', ''), radix: 16) ?? 0x4CAF50;
+  final value = int.tryParse(hex.replaceFirst('#', ''), radix: 16) ?? 0xFF6B4A;
   return Color(0xFF000000 | value);
 }
 
@@ -160,16 +160,16 @@ String colorToHex(Color color) {
   return '#${rgb.toRadixString(16).padLeft(6, '0').toUpperCase()}';
 }
 
-/// Colors offered when creating a circle.
+/// Colors offered when creating a circle (warm palette; the first is the default).
 const circleColorChoices = <Color>[
-  Color(0xFF4CAF50),
-  Color(0xFF2196F3),
-  Color(0xFFFF9800),
-  Color(0xFFE91E63),
-  Color(0xFF9C27B0),
-  Color(0xFF009688),
-  Color(0xFFF44336),
-  Color(0xFF795548),
+  Color(0xFFFF6B4A), // coral
+  Color(0xFFE9A23B), // mustard
+  Color(0xFF3D5A80), // slate blue
+  Color(0xFF8E4585), // plum
+  Color(0xFF2A9D8F), // teal
+  Color(0xFFE56B9F), // rose
+  Color(0xFF4EA8DE), // sky
+  Color(0xFFC8553D), // terracotta
 ];
 
 /// Emoji offered when creating a circle.

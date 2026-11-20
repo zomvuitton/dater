@@ -112,7 +112,8 @@ class AppLocalizationsTr extends AppLocalizations {
   String get myWeekTitle => 'Takvimim';
 
   @override
-  String get myWeekHint => 'Saatlere dokunarak seç ya da basılı tutup sürükle. Tüm günü seçmek için güne dokun.';
+  String get myWeekHint =>
+      'Günler arasında kaydır. Saatlere dokun ya da basılı tutup sürükle; tüm gün için günün adına dokun.';
 
   @override
   String hoursSelected(int count) {

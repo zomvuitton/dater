@@ -17,6 +17,13 @@ DateTime weekStartOf(DateTime date) {
   return DateTime(local.year, local.month, local.day - (local.weekday - DateTime.monday));
 }
 
+/// The day to focus when a week is shown: today in the current week,
+/// otherwise Monday.
+int defaultFocusDay(DateTime weekStart, {DateTime? now}) {
+  final today = now ?? DateTime.now();
+  return weekStartOf(today) == weekStart ? today.weekday - DateTime.monday : 0;
+}
+
 /// The Monday [weeks] weeks after [weekStart] (negative goes back).
 DateTime addWeeks(DateTime weekStart, int weeks) =>
     DateTime(weekStart.year, weekStart.month, weekStart.day + weeks * daysPerWeek);

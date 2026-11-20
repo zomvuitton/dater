@@ -155,6 +155,12 @@ class _CircleWeekTab extends ConsumerStatefulWidget {
 
 class _CircleWeekTabState extends ConsumerState<_CircleWeekTab> {
   DateTime _weekStart = weekStartOf(DateTime.now());
+  int? _focusOnNewWeek;
+
+  void _changeWeek(DateTime week, {int? focus}) => setState(() {
+    _weekStart = week;
+    _focusOnNewWeek = focus;
+  });
 
   Future<void> _showSlot(Slot slot, Set<String> freeIds, Map<String, Profile> members) async {
     final l10n = AppLocalizations.of(context);
@@ -254,7 +260,7 @@ class _CircleWeekTabState extends ConsumerState<_CircleWeekTab> {
 
     return Column(
       children: [
-        WeekSwitcher(weekStart: _weekStart, onChanged: (w) => setState(() => _weekStart = w)),
+        WeekSwitcher(weekStart: _weekStart, onChanged: _changeWeek),
         if (weekAsync.isLoading) const LinearProgressIndicator(minHeight: 2) else const SizedBox(height: 2),
         if (weekAsync.hasError)
           Expanded(
@@ -264,36 +270,61 @@ class _CircleWeekTabState extends ConsumerState<_CircleWeekTab> {
           Expanded(
             child: WeekGrid(
               weekStart: _weekStart,
+              initialFocusDay: _focusOnNewWeek,
+              onWeekEdge: (direction) =>
+                  _changeWeek(addWeeks(_weekStart, direction), focus: direction > 0 ? 0 : daysPerWeek - 1),
               onTap: (slot) => _showSlot(slot, week[slot] ?? const {}, members),
               cellBuilder: (context, slot) {
                 final count = week[slot]?.length ?? 0;
                 final everyone = count > 0 && count >= members.length;
-                return Stack(
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: WeekGrid.blockInsetX,
-                        vertical: WeekGrid.blockInsetY,
-                      ),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: count == 0 ? null : scheme.primary.withValues(alpha: 0.15 + 0.75 * count / total),
-                        borderRadius: BorderRadius.circular(8),
-                        border: everyone ? Border.all(color: scheme.primary, width: 2) : null,
-                      ),
-                      child: count == 0
-                          ? null
-                          : Text(
-                              '$count',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: count / total > 0.5 ? scheme.onPrimary : scheme.onSurface,
-                              ),
-                            ),
-                    ),
-                    if (planSlots.contains(slot))
-                      Positioned(top: 3, right: 3, child: Icon(Icons.star, size: 10, color: scheme.tertiary)),
-                  ],
+                final strength = count / total;
+                return LayoutBuilder(
+                  builder: (context, constraints) {
+                    // The focused day shows "3/4"; narrow days only the color.
+                    final wide = constraints.maxWidth >= WeekGrid.wideColumn;
+                    return Stack(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: WeekGrid.blockInsetX,
+                            vertical: WeekGrid.blockInsetY,
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          alignment: wide ? AlignmentDirectional.centerStart : Alignment.center,
+                          decoration: BoxDecoration(
+                            color: count == 0 ? null : scheme.primary.withValues(alpha: 0.18 + 0.82 * strength),
+                            borderRadius: BorderRadius.circular(10),
+                            border: everyone ? Border.all(color: scheme.secondary, width: 2) : null,
+                          ),
+                          child: count == 0 || !wide
+                              ? null
+                              : Row(
+                                  children: [
+                                    Icon(
+                                      Icons.people_alt_rounded,
+                                      size: 16,
+                                      color: strength > 0.5 ? scheme.onPrimary : scheme.onSurface,
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      '$count/${members.length}',
+                                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                                        fontWeight: FontWeight.w800,
+                                        color: strength > 0.5 ? scheme.onPrimary : scheme.onSurface,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                        ),
+                        if (planSlots.contains(slot))
+                          Positioned(
+                            top: 4,
+                            right: 6,
+                            child: Icon(Icons.star_rounded, size: wide ? 16 : 10, color: scheme.tertiary),
+                          ),
+                      ],
+                    );
+                  },
                 );
               },
             ),

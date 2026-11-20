@@ -19,23 +19,23 @@ class HomeShell extends StatelessWidget {
         onDestinationSelected: (i) => shell.goBranch(i, initialLocation: i == shell.currentIndex),
         destinations: [
           NavigationDestination(
-            icon: const Icon(Icons.calendar_view_week_outlined),
-            selectedIcon: const Icon(Icons.calendar_view_week),
+            icon: const Icon(Icons.wb_twilight_outlined),
+            selectedIcon: const Icon(Icons.wb_twilight_rounded),
             label: l10n.navMyWeek,
           ),
           NavigationDestination(
-            icon: const Icon(Icons.groups_outlined),
-            selectedIcon: const Icon(Icons.groups),
+            icon: const Icon(Icons.bubble_chart_outlined),
+            selectedIcon: const Icon(Icons.bubble_chart_rounded),
             label: l10n.navCircles,
           ),
           NavigationDestination(
-            icon: const Icon(Icons.people_outline),
-            selectedIcon: const Icon(Icons.people),
+            icon: const Icon(Icons.people_alt_outlined),
+            selectedIcon: const Icon(Icons.people_alt_rounded),
             label: l10n.navFriends,
           ),
           NavigationDestination(
-            icon: const Icon(Icons.person_outline),
-            selectedIcon: const Icon(Icons.person),
+            icon: const Icon(Icons.face_outlined),
+            selectedIcon: const Icon(Icons.face_rounded),
             label: l10n.navProfile,
           ),
         ],

@@ -34,7 +34,7 @@
   "onboardingBody": "Friends find and add you with your @username.",
   "continueAction": "Continue",
   "myWeekTitle": "My week",
-  "myWeekHint": "Tap hours to select them, or long-press and drag. Tap a day to select it all.",
+  "myWeekHint": "Swipe between days. Tap hours or long-press and drag; tap the day's name to pick it all.",
   "hoursSelected": "{count, plural, =1{1 hour selected} other{{count} hours selected}}",
   "@hoursSelected": {
     "placeholders": {

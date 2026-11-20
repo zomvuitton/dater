@@ -4,11 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/locale.dart';
 import 'core/router.dart';
+import 'core/theme.dart';
 import 'core/ui.dart';
 import 'features/notifications/push_service.dart';
 import 'l10n/app_localizations.dart';
-
-const _seed = Color(0xFF3FA34D);
 
 class DaterApp extends ConsumerWidget {
   const DaterApp({super.key});
@@ -29,14 +28,8 @@ class DaterApp extends ConsumerWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      theme: _theme(Brightness.light),
-      darkTheme: _theme(Brightness.dark),
+      theme: AppTheme.light(),
+      darkTheme: AppTheme.dark(),
     );
   }
-
-  ThemeData _theme(Brightness brightness) => ThemeData(
-    colorScheme: ColorScheme.fromSeed(seedColor: _seed, brightness: brightness),
-    useMaterial3: true,
-    inputDecorationTheme: const InputDecorationTheme(border: OutlineInputBorder()),
-  );
 }

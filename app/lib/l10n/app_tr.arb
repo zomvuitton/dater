@@ -34,7 +34,7 @@
   "onboardingBody": "Arkadaşların seni @kullanıcıadın ile bulup ekler.",
   "continueAction": "Devam",
   "myWeekTitle": "Takvimim",
-  "myWeekHint": "Saatlere dokunarak seç ya da basılı tutup sürükle. Tüm günü seçmek için güne dokun.",
+  "myWeekHint": "Günler arasında kaydır. Saatlere dokun ya da basılı tutup sürükle; tüm gün için günün adına dokun.",
   "hoursSelected": "{count, plural, =1{1 saat seçildi} other{{count} saat seçildi}}",
   "clearSelection": "Seçimi temizle",
   "markAvailable": "Müsaitim",

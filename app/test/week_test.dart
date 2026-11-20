@@ -17,6 +17,13 @@ void main() {
     });
   });
 
+  test('defaultFocusDay: today in the current week, otherwise Monday', () {
+    final now = DateTime(2026, 11, 20, 15); // a Friday
+    expect(defaultFocusDay(DateTime(2026, 11, 16), now: now), 4);
+    expect(defaultFocusDay(DateTime(2026, 11, 23), now: now), 0);
+    expect(defaultFocusDay(DateTime(2026, 11, 9), now: now), 0);
+  });
+
   test('addWeeks keeps local midnight', () {
     final ws = DateTime(2026, 10, 19);
     expect(addWeeks(ws, 1), DateTime(2026, 10, 26));

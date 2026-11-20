@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/supabase.dart';
+import '../../core/theme.dart';
 import '../../core/ui.dart';
 import '../../l10n/app_localizations.dart';
 
@@ -73,9 +74,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Icon(Icons.calendar_month, size: 64, color: theme.colorScheme.primary),
-                    const SizedBox(height: 12),
-                    Text(l10n.appTitle, textAlign: TextAlign.center, style: theme.textTheme.headlineMedium),
+                    const DaterWordmark(fontSize: 52),
                     const SizedBox(height: 4),
                     Text(l10n.appTagline, textAlign: TextAlign.center, style: theme.textTheme.bodyMedium),
                     const SizedBox(height: 32),
@@ -123,6 +122,40 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// "dater." — the lowercase wordmark with a coral dot.
+class DaterWordmark extends StatelessWidget {
+  const DaterWordmark({super.key, this.fontSize = 40});
+
+  final double fontSize;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final style = TextStyle(
+      fontFamily: AppTheme.fontFamily,
+      fontSize: fontSize,
+      fontWeight: FontWeight.w800,
+      letterSpacing: -fontSize * 0.04,
+      height: 1,
+      color: scheme.onSurface,
+    );
+    return Text.rich(
+      TextSpan(
+        style: style,
+        children: [
+          const TextSpan(text: 'dater'),
+          TextSpan(
+            text: '.',
+            style: TextStyle(color: scheme.primary),
+          ),
+        ],
+      ),
+      textAlign: TextAlign.center,
+      semanticsLabel: 'Dater',
     );
   }
 }

@@ -299,7 +299,7 @@ abstract class AppLocalizations {
   /// No description provided for @myWeekHint.
   ///
   /// In en, this message translates to:
-  /// **'Tap hours to select them, or long-press and drag. Tap a day to select it all.'**
+  /// **'Swipe between days. Tap hours or long-press and drag; tap the day\'s name to pick it all.'**
   String get myWeekHint;
 
   /// No description provided for @hoursSelected.

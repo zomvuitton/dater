@@ -112,7 +112,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get myWeekTitle => 'My week';
 
   @override
-  String get myWeekHint => 'Tap hours to select them, or long-press and drag. Tap a day to select it all.';
+  String get myWeekHint => 'Swipe between days. Tap hours or long-press and drag; tap the day\'s name to pick it all.';
 
   @override
   String hoursSelected(int count) {
