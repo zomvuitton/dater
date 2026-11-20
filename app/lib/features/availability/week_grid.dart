@@ -4,13 +4,26 @@ import 'package:intl/intl.dart';
 import '../../core/ui.dart';
 import '../../core/week.dart';
 
-/// A 7-day × 24-hour grid. Tap a cell to toggle it; long-press and drag to
-/// paint a range. Scrolling vertically works as usual.
+/// A rectangle drawn over one day column, spanning [fromHour, toHour).
+class WeekGridBlock {
+  const WeekGridBlock({required this.day, required this.fromHour, required this.toHour, required this.child});
+
+  final int day;
+  final int fromHour;
+  final int toHour;
+  final Widget child;
+}
+
+/// A 7-day × 24-hour grid with zebra-striped hour rows. Tap a cell to toggle
+/// it; long-press and drag to paint a range. Scrolling vertically works as
+/// usual. Content is drawn either per cell ([cellBuilder]) or as blocks that
+/// span several hours ([blocks]); blocks never take touches away from the grid.
 class WeekGrid extends StatefulWidget {
   const WeekGrid({
     super.key,
     required this.weekStart,
-    required this.cellBuilder,
+    this.cellBuilder,
+    this.blocks = const [],
     this.onTap,
     this.onDayTap,
     this.onDragStart,
@@ -21,7 +34,8 @@ class WeekGrid extends StatefulWidget {
   });
 
   final DateTime weekStart;
-  final Widget Function(BuildContext context, Slot slot) cellBuilder;
+  final Widget Function(BuildContext context, Slot slot)? cellBuilder;
+  final List<WeekGridBlock> blocks;
   final ValueChanged<Slot>? onTap;
   final ValueChanged<int>? onDayTap;
   final ValueChanged<Slot>? onDragStart;
@@ -31,6 +45,13 @@ class WeekGrid extends StatefulWidget {
   final double cellHeight;
 
   static const hourLabelWidth = 44.0;
+
+  /// Space between a block and its column edges / the hour lines.
+  static const blockInsetX = 3.0;
+  static const blockInsetY = 2.0;
+
+  /// Background of every other hour row.
+  static Color stripeColor(ThemeData theme) => theme.colorScheme.onSurface.withValues(alpha: 0.055);
 
   @override
   State<WeekGrid> createState() => _WeekGridState();
@@ -69,10 +90,14 @@ class _WeekGridState extends State<WeekGrid> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
     final locale = localeName(context);
     final today = DateTime.now();
     final days = weekDays(widget.weekStart);
     final dragEnabled = widget.onDragStart != null;
+    final h = widget.cellHeight;
+    final stripe = WeekGrid.stripeColor(theme);
+    final separator = theme.dividerColor.withValues(alpha: 0.18);
 
     return Column(
       children: [
@@ -98,82 +123,131 @@ class _WeekGridState extends State<WeekGrid> {
           child: SingleChildScrollView(
             key: _viewportKey,
             controller: _scroll,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: WeekGrid.hourLabelWidth,
-                  child: Column(
+            child: SizedBox(
+              height: hoursPerDay * h,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  // Zebra rows, running under the hour labels too.
+                  Column(
                     children: [
-                      for (var h = 0; h < hoursPerDay; h++)
+                      for (var hour = 0; hour < hoursPerDay; hour++)
                         SizedBox(
-                          height: widget.cellHeight,
-                          child: Align(
-                            alignment: Alignment.topCenter,
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 2),
-                              child: Text(formatHour(context, h), style: theme.textTheme.labelSmall),
-                            ),
-                          ),
+                          key: ValueKey('week-grid-row-$hour'),
+                          height: h,
+                          width: double.infinity,
+                          child: ColoredBox(color: hour.isEven ? stripe : Colors.transparent),
                         ),
                     ],
                   ),
-                ),
-                Expanded(
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      final width = constraints.maxWidth;
-                      return GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        // Each cell exposes its own tap action to screen readers below.
-                        excludeFromSemantics: true,
-                        onTapUp: widget.onTap == null ? null : (d) => widget.onTap!(_slotAt(d.localPosition, width)),
-                        onLongPressStart: dragEnabled
-                            ? (d) => widget.onDragStart!(_slotAt(d.localPosition, width))
-                            : null,
-                        onLongPressMoveUpdate: dragEnabled
-                            ? (d) {
-                                _autoScroll(d.globalPosition);
-                                widget.onDragUpdate?.call(_slotAt(d.localPosition, width));
-                              }
-                            : null,
-                        onLongPressEnd: dragEnabled ? (_) => widget.onDragEnd?.call() : null,
-                        onLongPressCancel: dragEnabled ? widget.onDragEnd : null,
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      SizedBox(
+                        width: WeekGrid.hourLabelWidth,
                         child: Column(
                           children: [
-                            for (var h = 0; h < hoursPerDay; h++)
+                            for (var hour = 0; hour < hoursPerDay; hour++)
                               SizedBox(
-                                height: widget.cellHeight,
-                                child: Row(
-                                  children: [
-                                    for (var d = 0; d < daysPerWeek; d++)
-                                      Expanded(
-                                        child: Semantics(
-                                          button: widget.onTap != null,
-                                          label:
-                                              '${DateFormat.MMMMEEEEd(locale).format(days[d])}, ${formatHour(context, h)}',
-                                          onTap: widget.onTap == null ? null : () => widget.onTap!((day: d, hour: h)),
-                                          child: DecoratedBox(
-                                            decoration: BoxDecoration(
-                                              border: Border(
-                                                top: BorderSide(color: theme.dividerColor.withValues(alpha: 0.4)),
-                                                left: BorderSide(color: theme.dividerColor.withValues(alpha: 0.4)),
-                                              ),
-                                            ),
-                                            child: widget.cellBuilder(context, (day: d, hour: h)),
-                                          ),
-                                        ),
-                                      ),
-                                  ],
+                                height: h,
+                                child: Center(
+                                  child: Text(
+                                    formatHour(context, hour),
+                                    style: theme.textTheme.labelSmall?.copyWith(color: scheme.onSurfaceVariant),
+                                  ),
                                 ),
                               ),
                           ],
                         ),
-                      );
-                    },
+                      ),
+                      Expanded(
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            final width = constraints.maxWidth;
+                            final columnWidth = width / daysPerWeek;
+                            return GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              // Each cell exposes its own tap action to screen readers below.
+                              excludeFromSemantics: true,
+                              onTapUp: widget.onTap == null
+                                  ? null
+                                  : (d) => widget.onTap!(_slotAt(d.localPosition, width)),
+                              onLongPressStart: dragEnabled
+                                  ? (d) => widget.onDragStart!(_slotAt(d.localPosition, width))
+                                  : null,
+                              onLongPressMoveUpdate: dragEnabled
+                                  ? (d) {
+                                      _autoScroll(d.globalPosition);
+                                      widget.onDragUpdate?.call(_slotAt(d.localPosition, width));
+                                    }
+                                  : null,
+                              onLongPressEnd: dragEnabled ? (_) => widget.onDragEnd?.call() : null,
+                              onLongPressCancel: dragEnabled ? widget.onDragEnd : null,
+                              child: Stack(
+                                fit: StackFit.expand,
+                                children: [
+                                  // Faint day separators; today's column slightly tinted.
+                                  Row(
+                                    children: [
+                                      for (var d = 0; d < daysPerWeek; d++)
+                                        Expanded(
+                                          child: DecoratedBox(
+                                            decoration: BoxDecoration(
+                                              color: DateUtils.isSameDay(days[d], today)
+                                                  ? scheme.primary.withValues(alpha: 0.06)
+                                                  : null,
+                                              border: Border(left: BorderSide(color: separator)),
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                  // Cells: per-hour content and screen-reader tap targets.
+                                  Column(
+                                    children: [
+                                      for (var hour = 0; hour < hoursPerDay; hour++)
+                                        SizedBox(
+                                          height: h,
+                                          child: Row(
+                                            children: [
+                                              for (var d = 0; d < daysPerWeek; d++)
+                                                Expanded(
+                                                  child: Semantics(
+                                                    button: widget.onTap != null,
+                                                    label:
+                                                        '${DateFormat.MMMMEEEEd(locale).format(days[d])}, ${formatHour(context, hour)}',
+                                                    onTap: widget.onTap == null
+                                                        ? null
+                                                        : () => widget.onTap!((day: d, hour: hour)),
+                                                    child:
+                                                        widget.cellBuilder?.call(context, (day: d, hour: hour)) ??
+                                                        const SizedBox.expand(),
+                                                  ),
+                                                ),
+                                            ],
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                  // Multi-hour blocks on top.
+                                  for (final block in widget.blocks)
+                                    Positioned(
+                                      left: block.day * columnWidth + WeekGrid.blockInsetX,
+                                      top: block.fromHour * h + WeekGrid.blockInsetY,
+                                      width: columnWidth - 2 * WeekGrid.blockInsetX,
+                                      height: (block.toHour - block.fromHour) * h - 2 * WeekGrid.blockInsetY,
+                                      child: IgnorePointer(child: ExcludeSemantics(child: block.child)),
+                                    ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

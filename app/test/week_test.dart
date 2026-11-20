@@ -1,4 +1,5 @@
 import 'package:dater/core/week.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -75,6 +76,34 @@ void main() {
       (day: 1, fromHour: 9, toHour: 12),
       (day: 1, fromHour: 14, toHour: 15),
     ]);
+  });
+
+  group('valueRuns', () {
+    test('merges consecutive hours with equal circle sets', () {
+      final runs = valueRuns({
+        (day: 1, hour: 19): {'a', 'b'},
+        (day: 1, hour: 20): {'b', 'a'},
+        (day: 1, hour: 21): {'a'},
+        (day: 1, hour: 23): {'a'},
+        (day: 2, hour: 0): {'a'},
+      }, equals: setEquals);
+      expect(
+        [for (final r in runs) (r.day, r.fromHour, r.toHour, r.value.length)],
+        [
+          (1, 19, 21, 2), // same set in a different order still merges
+          (1, 21, 22, 1), // different circles split
+          (1, 23, 24, 1), // a gap splits
+          (2, 0, 1, 1), // runs never cross midnight
+        ],
+      );
+    });
+
+    test('uses == by default', () {
+      final runs = valueRuns({(day: 0, hour: 9): 2, (day: 0, hour: 10): 2, (day: 0, hour: 11): 3});
+      expect([for (final r in runs) (r.fromHour, r.toHour, r.value)], [(9, 11, 2), (11, 12, 3)]);
+    });
+
+    test('empty input gives no runs', () => expect(valueRuns(<Slot, int>{}), isEmpty));
   });
 
   group('GridSelection', () {

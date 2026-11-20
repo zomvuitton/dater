@@ -78,6 +78,29 @@ List<({int day, int fromHour, int toHour})> slotRuns(Iterable<Slot> slots) {
   return runs;
 }
 
+/// Groups slots of one day into consecutive runs of hours that carry an equal
+/// value, e.g. hours shared with the same set of circles. [equals] defaults
+/// to `==`; pass `setEquals` for sets.
+List<({int day, int fromHour, int toHour, T value})> valueRuns<T>(
+  Map<Slot, T> values, {
+  bool Function(T a, T b)? equals,
+}) {
+  final same = equals ?? (T a, T b) => a == b;
+  final sorted = values.keys.toList()
+    ..sort((a, b) => a.day != b.day ? a.day.compareTo(b.day) : a.hour.compareTo(b.hour));
+  final runs = <({int day, int fromHour, int toHour, T value})>[];
+  for (final s in sorted) {
+    final value = values[s] as T;
+    if (runs.isNotEmpty && runs.last.day == s.day && runs.last.toHour == s.hour && same(runs.last.value, value)) {
+      final last = runs.removeLast();
+      runs.add((day: last.day, fromHour: last.fromHour, toHour: s.hour + 1, value: last.value));
+    } else {
+      runs.add((day: s.day, fromHour: s.hour, toHour: s.hour + 1, value: value));
+    }
+  }
+  return runs;
+}
+
 /// Drag-to-paint selection over the grid.
 ///
 /// A drag starting on an unselected cell adds the rectangle between the start

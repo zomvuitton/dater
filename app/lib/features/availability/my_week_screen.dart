@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -98,7 +99,6 @@ class _MyWeekScreenState extends ConsumerState<MyWeekScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final scheme = Theme.of(context).colorScheme;
     final weekAsync = ref.watch(myWeekProvider(_weekStart));
     final circles = ref.watch(myCirclesProvider).value ?? const <Circle>[];
     final circleById = {for (final c in circles) c.id: c};
@@ -135,42 +135,28 @@ class _MyWeekScreenState extends ConsumerState<MyWeekScreen> {
                 onDragStart: (slot) => setState(() => _selection.startDrag(slot)),
                 onDragUpdate: (slot) => setState(() => _selection.updateDrag(slot)),
                 onDragEnd: () => setState(_selection.endDrag),
-                cellBuilder: (context, slot) {
-                  final shared = week[slot];
-                  final selected = _selection.contains(slot);
-                  final colors = [for (final id in shared ?? const <String>{}) ?circleById[id]?.color];
-                  return Container(
-                    margin: const EdgeInsets.all(1.5),
-                    decoration: BoxDecoration(
-                      color: selected
-                          ? scheme.primary.withValues(alpha: 0.55)
-                          : shared != null
-                          ? scheme.primaryContainer
-                          : null,
-                      borderRadius: BorderRadius.circular(6),
-                      border: selected ? Border.all(color: scheme.primary, width: 2) : null,
+                blocks: [
+                  // Saved hours: consecutive hours shared with the same circles form one block.
+                  for (final run in valueRuns(week, equals: setEquals))
+                    WeekGridBlock(
+                      day: run.day,
+                      fromHour: run.fromHour,
+                      toHour: run.toHour,
+                      child: AvailabilityBlock(
+                        fromHour: run.fromHour,
+                        toHour: run.toHour,
+                        colors: [for (final id in run.value) ?circleById[id]?.color],
+                      ),
                     ),
-                    child: shared == null
-                        ? null
-                        : Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Padding(
-                              padding: const EdgeInsets.only(bottom: 4),
-                              child: Wrap(
-                                spacing: 2,
-                                children: [
-                                  for (final color in colors.take(4))
-                                    Container(
-                                      width: 6,
-                                      height: 6,
-                                      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-                                    ),
-                                ],
-                              ),
-                            ),
-                          ),
-                  );
-                },
+                  // The current selection, drawn on top.
+                  for (final run in slotRuns(_selection.selected))
+                    WeekGridBlock(
+                      day: run.day,
+                      fromHour: run.fromHour,
+                      toHour: run.toHour,
+                      child: AvailabilityBlock(fromHour: run.fromHour, toHour: run.toHour, selected: true),
+                    ),
+                ],
               ),
             ),
         ],
@@ -210,6 +196,69 @@ class _MyWeekScreenState extends ConsumerState<MyWeekScreen> {
                   ),
                 ),
               ),
+      ),
+    );
+  }
+}
+
+/// One continuous stretch of free (or selected) hours in a day column.
+class AvailabilityBlock extends StatelessWidget {
+  const AvailabilityBlock({
+    super.key,
+    required this.fromHour,
+    required this.toHour,
+    this.colors = const [],
+    this.selected = false,
+  });
+
+  final int fromHour;
+  final int toHour;
+
+  /// Colors of the circles these hours are shared with.
+  final List<Color> colors;
+  final bool selected;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final foreground = selected ? scheme.onPrimary : scheme.onPrimaryContainer;
+    return Container(
+      padding: const EdgeInsets.fromLTRB(3, 3, 3, 4),
+      decoration: BoxDecoration(
+        color: selected ? scheme.primary.withValues(alpha: 0.6) : scheme.primaryContainer,
+        borderRadius: BorderRadius.circular(8),
+        border: selected ? Border.all(color: scheme.primary, width: 2) : null,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Narrow columns: shrink the label rather than cut it off.
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: AlignmentDirectional.centerStart,
+            child: Text(
+              '$fromHour–$toHour',
+              maxLines: 1,
+              softWrap: false,
+              style: Theme.of(context).textTheme.labelSmall
+                  ?.copyWith(color: foreground, fontWeight: FontWeight.w600, height: 1.1),
+            ),
+          ),
+          const Spacer(),
+          if (colors.isNotEmpty)
+            Wrap(
+              spacing: 2,
+              runSpacing: 2,
+              children: [
+                for (final color in colors.take(4))
+                  Container(
+                    width: 6,
+                    height: 6,
+                    decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+                  ),
+              ],
+            ),
+        ],
       ),
     );
   }

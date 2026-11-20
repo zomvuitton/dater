@@ -271,11 +271,14 @@ class _CircleWeekTabState extends ConsumerState<_CircleWeekTab> {
                 return Stack(
                   children: [
                     Container(
-                      margin: const EdgeInsets.all(1.5),
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: WeekGrid.blockInsetX,
+                        vertical: WeekGrid.blockInsetY,
+                      ),
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         color: count == 0 ? null : scheme.primary.withValues(alpha: 0.15 + 0.75 * count / total),
-                        borderRadius: BorderRadius.circular(6),
+                        borderRadius: BorderRadius.circular(8),
                         border: everyone ? Border.all(color: scheme.primary, width: 2) : null,
                       ),
                       child: count == 0

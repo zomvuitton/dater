@@ -61,7 +61,7 @@ cd app && flutter run --dart-define=SUPABASE_URL=http://192.168.1.20:54321
    supabase link --project-ref <proje-ref>
    ```
    ```bash
-   supabase db push
+   supabase db push --remote
    ```
 3. Dashboard → Authentication → URL Configuration → *Redirect URLs* listesine `dater://login-callback` ekle.
 4. Uygulamayı proje adresi ve publishable (anon) anahtarıyla çalıştır:
